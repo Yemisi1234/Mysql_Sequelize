@@ -22,6 +22,7 @@ db.sequelize = sequelize
 
 db.products = require('./models/productModel')(sequelize, DataTypes)
 db.reviews = require('./models/reviewModel')(sequelize, DataTypes)
+db.users = require('./models/userModel')(sequelize, DataTypes)
 
 db.sequelize.sync({force: false})
 .then(()=>{
@@ -29,15 +30,14 @@ db.sequelize.sync({force: false})
 })
 
 
-db.products.hasMany(db.reviews, {
-    foreignKey: 'product_id',
-    as: 'review'
-})
+// db.products.hasOne(db.reviews, {
+//     foreignKey: 'product_id',
 
-db.reviews.belongsTo(db.products, {
-    foreignKey: 'product_id',
-    as: 'product'
-})
+// })
+
+// db.reviews.belongsTo(db.products, {
+//     foreignKey: 'product_id'
+// })
 
 module.exports = db
 

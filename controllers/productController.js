@@ -2,33 +2,40 @@
 const publishToQueue = require('../servces/my_service');
 const db = require('../index')
 
-const Products = db.products
-const Reviews = db.reviews
+const Product = db.products
+const Users = db.users
 
-// const createProducts = async (req, res)=>{
-//     try{
-//         const data = {
-//             title: req.body.title,
-//             description: req.body.description,
-//             price: req.body.price
-//         }
-//         let products =  await Products.create(data)
-//         console.log(Products)
-//         res.status(200).send(products)
-//     }catch(err){
-//      console.log(err)
-//     }
-// }
+const createProducts = async (req, res)=>{
+    try{
+        const data = {
+            title: req.body.title,
+            description: req.body.description,
+            price: req.body.price
+        }
+        let products =  await Product.create(data)
+        res.status(200).send(products)
+    }catch(err){
+     console.log(err)
+    }
+}
 
 const getAllProducts = async(req, res)=>{
-    const products = await Products.findAll({}) 
+    const products = await Product.findAll({
+      include: [db.reviews]
+    }) 
     res.status(200).send(products)
+}
+const getAllUsers = async(req, res)=>{
+  const products = await Users.findAll({
+    include: [db.products, db.reviews]
+  }) 
+  res.status(200).send(products)
 }
 
 const getOneProduct = async function(req, res){
        let id = req.params.id;
     try{
-        const project = await Products.findByPk(id)
+        const project = await Product.findByPk(id)
         res.status(200).send(project)
         if(project === null){
             console.log('Not found!');
@@ -40,7 +47,7 @@ const getOneProduct = async function(req, res){
 }
   const deleteProduct = async(req, res)=>{
     let id = req.params.id;
-     const data = await Products.destroy({ where: { id: id }}) 
+     const data = await Product.destroy({ where: { id: id }}) 
      res.status(200).send(`Product is deleted`)
         .then(num => {
           if (num == null) {
@@ -73,17 +80,10 @@ const getOneProduct = async function(req, res){
     catch(err){
       res.status(500).send({"message-sent":false})
     }
-         
-    // let { queueName, payload} = req.body;
     
-    // res.send(queueName, payload)
-    // await publishToQueue(title, description, price);
-    // res.statusCode = 200;
-    // res.data = {"message-sent":true};
-    // next();
   }
    
-module.exports = {rabbitMq , getAllProducts, getOneProduct, deleteProduct, updateProduct};
+module.exports = {rabbitMq , getAllProducts, getOneProduct, deleteProduct, updateProduct, createProducts, getAllUsers};
 
 
 

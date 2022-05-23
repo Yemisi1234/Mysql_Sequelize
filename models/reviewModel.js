@@ -1,6 +1,9 @@
 module.exports = (sequelize, DataTypes) =>{
 
-    const Reviews = sequelize.define('reviews',{
+    const Review= sequelize.define('Review',{
+        productId:{
+            type: DataTypes.INTEGER,
+        },
          rating: {
              type: DataTypes.STRING,
              allowNull: false
@@ -10,5 +13,16 @@ module.exports = (sequelize, DataTypes) =>{
              allowNull: false
          }
     })
-    return Reviews
+    Review.associate = (models) => {
+        Review.belongsTo(models.Product, {
+          foreignKey: 'productId'
+        });
+      };
+      Review.associate = (models) => {
+    Review.BelongsToMany(models.User, {
+          foreignKey: 'productId'
+        });
+      };
+    return Review;
 }
+
